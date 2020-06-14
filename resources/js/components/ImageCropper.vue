@@ -10,7 +10,7 @@
       @change="setImage"
     />
     <div class="form-group text-center">
-      <button class="btn btn-dark btn-sm" @click="selectImage">Select Image</button>
+      <button class="btn btn-dark btn-sm" @click="selectImage">{{ buttonText }}</button>
     </div>
 
     <div
@@ -27,12 +27,17 @@
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <button type="button" class="close" @click="close" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
           <div class="modal-body">
-            <vue-cropper ref="cropper" :aspect-ratio="16 / 7" :src="imgSrc" @cropend="cropEnd" />
+            <vue-cropper
+              ref="cropper"
+              :aspect-ratio="aspectRatio"
+              :src="imgSrc"
+              @cropend="cropEnd"
+            />
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" @click="close">Close</button>
@@ -52,6 +57,14 @@ export default {
     "vue-cropper": VueCropper
   },
   props: {
+    aspectRatio: {
+      type: Number,
+      default: 1
+    },
+    buttonText: {
+      type: String,
+      default: "Select Image"
+    }
     // imgSrc: {
     //   type: String,
     //   required: false,

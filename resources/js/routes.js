@@ -4,6 +4,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import RegisterEmployer from './pages/RegisterEmployer';
 import JobDetails from './pages/JobDetails';
+import JobCreate from './pages/JobCreate';
 import UserProfile from './pages/UserProfile';
 import CompanyProfile from './pages/CompanyProfile';
 
@@ -17,6 +18,11 @@ export const routes = [
     path: '/jobs/:id/:job',
     name: 'job-details',
     component: JobDetails,
+  },
+  {
+    path: '/job/create',
+    name: 'job-create',
+    component: JobCreate,
   },
   {
     path: '/company/:id/:company',

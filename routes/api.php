@@ -21,6 +21,10 @@ Route::group(['prefix' => 'v1'], function () {
 	Route::post('checkDomain', 'Auth\RegisterController@checkDomain');
 
 
+	Route::group(['prefix' => 'categories'], function () {
+		Route::get('/', 'CategoryController@index');
+	});
+
 	Route::group(['prefix' => 'jobs'], function () {
 		Route::get('/', 'JobController@index');
 		Route::get('/{id}/{job}', 'JobController@show');

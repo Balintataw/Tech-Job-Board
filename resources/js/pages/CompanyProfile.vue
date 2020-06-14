@@ -4,17 +4,8 @@
       <div class="col-md-3">
         <img v-if="company.logo" :src="company.logo" width="100%" />
         <img v-else :src="'/images/avatar_default.svg'" width="100%" />
-        <input
-          @change="updateLogo"
-          id="upload_logo_button"
-          hidden
-          type="file"
-          class="form-control"
-          name="logo"
-        />
-        <br />
         <div class="form-group text-center mt-2">
-          <button class="btn btn-dark btn-sm" @click="selectLogo">Update</button>
+          <image-cropper buttonText="Update Logo" @crop-complete="updateLogo"></image-cropper>
         </div>
       </div>
       <div class="col-md-5">
@@ -30,7 +21,7 @@
               <input v-model="company.phone" type="tel" class="form-control" name="phone" />
             </div>
             <div class="form-group">
-              <label for>Website</label>
+              <label for="website">Website</label>
               <input v-model="company.website" type="text" class="form-control" name="website" />
             </div>
             <div class="form-group">
@@ -61,7 +52,7 @@
             <p>Address: {{company.address}}</p>
             <p>Member since: {{company.created_at | formatDate }}</p>
             <p>
-              <a :href="`company/${company.slug}`">View company page</a>
+              <router-link :to="`/company/${company.id}/${company.slug}`">View company page</router-link>
             </p>
           </div>
         </div>
@@ -70,10 +61,8 @@
           <div class="card-header">Cover Photo</div>
           <div class="card-body">
             <img v-if="company.cover_photo" :src="company.cover_photo" width="100%" />
-            <!-- <input @change="onCoverPhotoChange" type="file" class="form-control" name="cover_photo" /> -->
             <div class="mt-3">
-              <!-- <button class="btn btn-dark float-right" @click="updateCoverPhoto">Update</button> -->
-              <image-cropper :imgSrc="file" @crop-complete="updateCoverPhoto"></image-cropper>
+              <image-cropper :aspectRatio="16/7" @crop-complete="updateCoverPhoto"></image-cropper>
             </div>
           </div>
         </div>
@@ -117,14 +106,9 @@ export default {
         this.$toasted.error(error.messages[0]);
       }
     },
-    selectLogo() {
-      document.getElementById("upload_logo_button").click();
-    },
-    async updateLogo(e) {
-      const files = e.target.files;
-      if (!files.length) return;
+    async updateLogo(file) {
       const data = new FormData();
-      data.append("image", files[0]);
+      data.append("image", file);
       try {
         const resp = await Api.postWithProgress("company/profile/logo", data);
         console.log("UPDATE logo", resp);
@@ -148,27 +132,6 @@ export default {
       } catch (error) {
         console.log("coverphoto update error", error);
         this.$toasted.error(error.messages[0]);
-      }
-    },
-    onFileChange(e) {
-      const files = e.target.files;
-      if (!files.length) return;
-      console.log("files", files[0]);
-      this.file = files[0];
-    },
-    onCoverPhotoChange(e) {
-      const file = e.target.files[0];
-
-      if (typeof FileReader === "function") {
-        const reader = new FileReader();
-        reader.onload = event => {
-          this.imgSrc = event.target.result;
-          // rebuild cropperjs with the updated source
-          this.$refs.cropper.replace(event.target.result);
-        };
-        reader.readAsDataURL(file);
-      } else {
-        alert("Sorry, FileReader API not supported");
       }
     },
     async download(filepath) {

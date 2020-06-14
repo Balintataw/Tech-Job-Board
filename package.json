@@ -26,6 +26,7 @@
     "dependencies": {
         "date-fns": "^2.14.0",
         "vee-validate": "^3.3.2",
+        "vue-cropperjs": "^4.1.0",
         "vue-router": "^3.3.2",
         "vue-toasted": "^1.1.28",
         "vuetify": "^2.2.32",

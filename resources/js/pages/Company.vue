@@ -1,7 +1,7 @@
 <template>
   <div v-if="loaded" class="col-md-12">
     <div class="company-profile">
-      <img v-if="company.cover_photo" :src="company.cover_photo" class="img-fluid" />
+      <img v-if="company.cover_photo" :src="company.cover_photo" class="img-fluid" height="400" />
       <img v-else :src="'/images/cover_default.jpg'" class="img-fluid" />
       <div class="company-description">
         <div class="d-flex align-items-center my-2">

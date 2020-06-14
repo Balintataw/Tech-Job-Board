@@ -2,7 +2,7 @@
   <div>
     <navigation />
 
-    <div class="container">
+    <div class="container mt-2">
       <router-view></router-view>
     </div>
   </div>

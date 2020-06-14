@@ -69,10 +69,11 @@
         <div class="card">
           <div class="card-header">Cover Photo</div>
           <div class="card-body">
-            <input @change="onFileChange" type="file" class="form-control" name="cover_photo" />
-            <br />
-            <div class="form-group">
-              <button class="btn btn-dark float-right" @click="updateCoverPhoto">Update</button>
+            <img v-if="company.cover_photo" :src="company.cover_photo" width="100%" />
+            <!-- <input @change="onCoverPhotoChange" type="file" class="form-control" name="cover_photo" /> -->
+            <div class="mt-3">
+              <!-- <button class="btn btn-dark float-right" @click="updateCoverPhoto">Update</button> -->
+              <image-cropper :imgSrc="file" @crop-complete="updateCoverPhoto"></image-cropper>
             </div>
           </div>
         </div>
@@ -83,8 +84,12 @@
 <script>
 import axios from "axios";
 import Api from "@/api";
+import ImageCropper from "@/components/ImageCropper";
 
 export default {
+  components: {
+    "image-cropper": ImageCropper
+  },
   data() {
     return {
       coverLetter: null,
@@ -129,9 +134,10 @@ export default {
         this.$toasted.error(error.messages[0]);
       }
     },
-    async updateCoverPhoto() {
+    async updateCoverPhoto(file) {
+      console.log("onComplete", file);
       const data = new FormData();
-      data.append("image", this.file);
+      data.append("image", file);
       try {
         const resp = await Api.postWithProgress(
           "company/profile/coverphoto",
@@ -149,6 +155,21 @@ export default {
       if (!files.length) return;
       console.log("files", files[0]);
       this.file = files[0];
+    },
+    onCoverPhotoChange(e) {
+      const file = e.target.files[0];
+
+      if (typeof FileReader === "function") {
+        const reader = new FileReader();
+        reader.onload = event => {
+          this.imgSrc = event.target.result;
+          // rebuild cropperjs with the updated source
+          this.$refs.cropper.replace(event.target.result);
+        };
+        reader.readAsDataURL(file);
+      } else {
+        alert("Sorry, FileReader API not supported");
+      }
     },
     async download(filepath) {
       const { data } = await axios.post(`/api/v1/download`, { path: filepath });

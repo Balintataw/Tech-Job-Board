@@ -165,12 +165,10 @@ class AuthController extends Controller
      */
     public function logout()
     {
-        if (Auth::check()) {
-            Auth::user()->token()->revoke();
-            return response()->json(['message' => 'Logout success'], 200); 
-        }else{
-            return response()->json(['error' => 'Logout failed'], 500);
-        }
+        auth()->user()->tokens()->each(function($token, $key) {
+            $token->delete();
+        });
+        return response()->json(['message' => 'Logout success'], 200); 
     }
 
     /**

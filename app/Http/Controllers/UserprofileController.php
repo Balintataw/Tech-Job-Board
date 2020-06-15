@@ -35,10 +35,9 @@ class UserprofileController extends Controller
         ]);
     }
 
-    public function index() {
-        $user = auth()->user();
-        $user['profile_data'] = auth()->user()->profile()->get()[0];
-        return ['profile' => $user];
+    public function index(Request $request) {
+        $user = $request->user()->load('profile');
+        return ['user' => $user];
     }
 
     public function update(Request $request) {

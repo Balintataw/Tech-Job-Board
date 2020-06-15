@@ -16,9 +16,17 @@ use Illuminate\Support\Facades\Route;
 
 Route::group(['prefix' => 'v1'], function () {
 
-	// Route::group(['middleware' => 'auth:api'], function() {
+	Route::group(['middleware' => 'auth:api'], function() {
+		// protected user routes
+		Route::group(['prefix' => 'user'], function() {
+			Route::get('/profile', 'UserprofileController@index');
+			Route::put('/profile', 'UserprofileController@update');
+			Route::post('/profile/resume', 'UserprofileController@resume');
+			Route::post('/profile/coverletter', 'UserprofileController@coverletter');
+			Route::post('/profile/avatar', 'UserprofileController@avatar');
+		});
 
-	// });
+	});
 
 
 	Route::group(['prefix' => 'categories'], function () {
@@ -34,17 +42,12 @@ Route::group(['prefix' => 'v1'], function () {
 	Route::group(['prefix' => 'company'], function () {
 		Route::get('/profile', 'CompanyController@profile');
 		Route::get('/{id}/{company}', 'CompanyController@index');
-		Route::put('/profile', 'CompanyController@update')->middleware('auth');
-		Route::post('/profile/coverphoto', 'CompanyController@coverphoto')->middleware('auth');
-		Route::post('/profile/logo', 'CompanyController@logo')->middleware('auth');
+		Route::put('/profile', 'CompanyController@update')->middleware('auth:api');
+		Route::post('/profile/coverphoto', 'CompanyController@coverphoto')->middleware('auth:api');
+		Route::post('/profile/logo', 'CompanyController@logo')->middleware('auth:api');
 	});
 
 	Route::post('download', 'UserprofileController@download');
-	Route::get('user/profile', 'UserprofileController@index')->middleware('auth');
-	Route::put('user/profile', 'UserprofileController@update')->middleware('auth');
-	Route::post('user/profile/avatar', 'UserprofileController@avatar')->middleware('auth');
-	Route::post('user/profile/resume', 'UserprofileController@resume')->middleware('auth');
-	Route::post('user/profile/coverletter', 'UserprofileController@coverletter')->middleware('auth');
 });
 
 Route::group([
@@ -53,12 +56,13 @@ Route::group([
 ], function ($router) {
 
 	Route::post('/login', 'AuthController@login');
-	Route::post('/logout', 'AuthController@logout');
 	Route::post('/register', 'AuthController@register');
 	Route::post('/register/employer', 'AuthController@registerEmployer');
-	Route::get('/me', function(Request $request) {
+
+	Route::middleware('auth:api')->get('/me', function(Request $request) {
 		return $request->user();
-	})->middleware('auth:api')->name('me');
+	})->name('me');
+	Route::middleware('auth:api')->get('/logout', 'AuthController@logout');
 
 });
 

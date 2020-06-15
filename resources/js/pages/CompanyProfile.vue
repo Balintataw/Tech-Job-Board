@@ -8,7 +8,7 @@
           <image-cropper buttonText="Update Logo" @crop-complete="updateLogo"></image-cropper>
         </div>
       </div>
-      <div class="col-md-5">
+      <div class="col-md-6">
         <div class="card">
           <div class="card-header">Update your company information</div>
           <div class="card-body">
@@ -43,7 +43,7 @@
           </div>
         </div>
       </div>
-      <div class="col-md-4">
+      <div class="col-md-3">
         <div class="card">
           <div class="card-header">Your Information</div>
           <div class="card-body">

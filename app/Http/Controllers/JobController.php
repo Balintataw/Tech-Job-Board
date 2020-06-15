@@ -44,6 +44,14 @@ class JobController extends Controller
             'redirect' => '/company/' . $company->slug, 
             'message' => 'Job created successfully',
             'job' => $job,
-        ]);
+        ], 200);
+    }
+
+    public function myjobs() {
+        $user_id = auth()->user()->id;
+        $jobs = Job::where('user_id', $user_id);
+        return response()->json([
+            'jobs' => $jobs
+        ], 200);
     }
 }

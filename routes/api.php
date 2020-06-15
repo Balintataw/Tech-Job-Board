@@ -37,6 +37,7 @@ Route::group(['prefix' => 'v1'], function () {
 		Route::get('/', 'JobController@index');
 		Route::get('/{id}/{job}', 'JobController@show');
 		Route::post('/create', 'JobController@create');
+		Route::get('/my-jobs', 'JobController@myjobs');
 	});
 
 	Route::group(['prefix' => 'company'], function () {
@@ -58,11 +59,11 @@ Route::group([
 	Route::post('/login', 'AuthController@login');
 	Route::post('/register', 'AuthController@register');
 	Route::post('/register/employer', 'AuthController@registerEmployer');
-
-	Route::middleware('auth:api')->get('/me', function(Request $request) {
+	Route::post('/refresh', 'AuthController@refresh');
+	Route::get('/me', function(Request $request) {
 		return $request->user();
-	})->name('me');
-	Route::middleware('auth:api')->get('/logout', 'AuthController@logout');
+	});
+	Route::get('/logout', 'AuthController@logout');
 
 });
 

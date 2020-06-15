@@ -25,7 +25,23 @@ class AuthController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login', 'register', 'registerEmployer']]);
+        $this->middleware('auth:api', ['except' => ['login', 'register', 'registerEmployer', 'refresh']]);
+    }
+
+    /**
+     * Get a validator for an incoming registration request.
+     *
+     * @param  array  $data
+     * @return \Illuminate\Contracts\Validation\Validator
+     */
+    protected function validator(array $data)
+    {
+        return Validator::make($data, [
+            'name' => ['required', 'string', 'max:40'],
+            'email' => ['required', 'string', 'email', 'max:100', 'unique:users'],
+            'password' => ['required', 'string', 'min:8'],
+            'user_type' => ['required', 'string']
+        ]);
     }
 
     /**
@@ -71,26 +87,10 @@ class AuthController extends Controller
     }
 
     /**
-     * Get a validator for an incoming registration request.
-     *
-     * @param  array  $data
-     * @return \Illuminate\Contracts\Validation\Validator
-     */
-    protected function validator(array $data)
-    {
-        return Validator::make($data, [
-            'name' => ['required', 'string', 'max:40'],
-            'email' => ['required', 'string', 'email', 'max:100', 'unique:users'],
-            'password' => ['required', 'string', 'min:8'],
-            'user_type' => ['required', 'string']
-        ]);
-    }
-
-    /**
      * Create a new user instance after a valid registration.
      *
      * @param  array  $data
-     * @return \App\User
+     * @return \Illuminate\Http\JsonResponse
      */
     public function register(request $request)
     {
@@ -111,6 +111,13 @@ class AuthController extends Controller
             'message' => 'User created successful!',
         ], 201);
     }
+
+    /**
+     * Create a new user as an employer and create Company instance after a valid registration.
+     *
+     * @param  array  $data
+     * @return \App\User - \App\Company - Token
+     */
 
     public function registerEmployer(request $request)
     {
@@ -176,24 +183,17 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function refresh()
+    public function refresh(Request $request)
     {
-        return $this->respondWithToken(auth()->refresh());
+        $response = Http::post(Config::get('services.passport.login_endpoint'), [
+            'grant_type' => 'refresh_token',
+            'refresh_token' => $request->refresh_token,
+            'client_id' => Config::get('services.passport.client_id'),
+            'client_secret' => Config::get('services.passport.client_secret'),
+            'scope' => '',
+        ]);
+
+        return json_decode((string) $response->getBody(), true);
     }
 
-    /**
-     * Get the token array structure.
-     *
-     * @param  string $token
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    protected function respondWithToken($token)
-    {
-        return response()->json([
-            'access_token' => $token,
-            'token_type' => 'bearer',
-            'expires_in' => auth()->factory()->getTTL() * 60
-        ]);
-    }
 }

@@ -38,16 +38,16 @@ export const authentication = {
       commit('loginRequest');
       try {
         const { data } = await Auth.login({
-          email,
+          username: email,
           password
         });
         console.log("LOGIN resp", data);
-        const expires = "expires=" + data.token.original.expires_in;
-        window.localStorage.setItem('Token', data.token.original.access_token);
-        window.localStorage.setItem('expires', data.token.original.expires_in);
+        const expires = "expires=" + data.body.expires_in;
+        window.localStorage.setItem('Token', data.body.access_token);
+        window.localStorage.setItem('expires', data.body.expires_in);
         document.cookie =
           "Token=" +
-          data.token.original.access_token +
+          data.body.access_token +
           ";" +
           expires +
           ";path=/";
@@ -59,40 +59,36 @@ export const authentication = {
         this.$toasted.error(msg);
         console.log("Login error:", error);
       }
-      // return firebase.auth().signInWithEmailAndPassword(employeeEmail, password)
-      //     .then(user => {
-      //         const newUser = {
-      //             email: user.user.email,
-      //             verified: user.user.emailVerified,
-      //             id: user.user.uid,
-      //         }
-      //         window.localStorage.setItem('token', newUser.id)
-      //         commit('loginSuccess', newUser);
-      //         return newUser;
-      //     })
-      //     .catch(error => {
-      //         commit('loginFailure', error);
-      //         return { e: error, status: 500 };
-      //     })
-      // return api.login(employeeEmail, password)
-      //     .then(user => {
-      //         commit('loginSuccess', user.data);
-      //         return user.data;
-      //     },
-      //     error => {
-      //         commit('loginFailure', error);
-      //         dispatch('alert/error', error, { root: true });
-      //     }
-      // );
+    },
+    async register({ commit }, { email, password, name, user_type }) {
+      console.log(email, password, name, user_type);
+      commit('loginRequest');
+      try {
+        const { data } = await Auth.register({
+          email,
+          password,
+          name,
+          user_type
+        });
+        console.log("Register resp", data);
+
+        return data;
+      } catch (error) {
+        const msg = error.messages[0];
+        this.$toasted.error(msg);
+        console.log("Register error:", error);
+      }
     },
     async logout({ commit }) {
-
-      console.log("logout called");
-      await Auth.logout();
-      window.localStorage.clear();
-      document.cookie = "Token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-      commit('logout');
-      router.replace('/');
+      try {
+        await Auth.logout();
+        window.localStorage.clear();
+        document.cookie = "Token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        commit('logout');
+        router.replace('/');
+      } catch (error) {
+        console.log("Logout failed", error)
+      }
     },
   },
 }

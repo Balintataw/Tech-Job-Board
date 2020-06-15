@@ -31,7 +31,7 @@ instance.interceptors.request.use(
     try {
       token = getCookieValue('Token');
     } catch (error) { }
-
+    console.log("COOKIE", token)
     if (token) {
       console.log("SETTING TOKEN", token)
       config.headers.Authorization = `Bearer ${token}`;

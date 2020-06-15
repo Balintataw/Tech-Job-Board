@@ -8,9 +8,13 @@ use App\User;
 use App\Company;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Http\Client\RequestException;
+
 
 class AuthController extends Controller
 {
@@ -25,24 +29,45 @@ class AuthController extends Controller
     }
 
     /**
-     * Get a JWT via given credentials.
+     * Get a JWT via Passport and user via given credentials.
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function login()
+    public function login(Request $request)
     {
-        $credentials = request(['email', 'password']);
+        try {
+            $response = Http::post(Config::get('services.passport.login_endpoint'), [
+                'grant_type' => 'password',
+                'client_id' => Config::get('services.passport.client_id'),
+                'client_secret' => Config::get('services.passport.client_secret'),
+                'username' => $request->username,
+                'password' => $request->password
+            ]);
 
-        if (! $token = auth()->attempt($credentials)) {
-            return response()->json(['error' => 'Unauthorized'], 401);
+            $body = json_decode($response->getBody()->getContents());
+
+            $userResponse = Http::withHeaders([
+                    'Accept' => 'application/json',
+                    'Authorization' => 'Bearer '.$body->access_token,
+            ])->get('http://job-board.test/api/user');
+
+            $user = json_decode($userResponse->getBody()->getContents());
+
+            return response()->json([
+                'redirect' => '/',
+                'message' => 'Login Successful!',
+                'body' => $body,
+                'user' => $user
+            ], 201);
+
+        } catch (RequestException $e) {
+            if ($e->getCode() === 400) {
+                return response()->json('Invalid Request. Please enter a username or a password.', $e->getCode());
+            } else if ($e->getCode() === 401) {
+                return response()->json('Your credentials are incorrect.', $e->getCode());
+            }
+            return response()->json('Something went wrong on the server.', $e->getCode());
         }
-
-        return response()->json([
-            'redirect' => '/',
-            'message' => 'Registration Successful!',
-            'token' => $this->respondWithToken($token),
-            'user' => auth()->user()
-        ], 201);
     }
 
     /**
@@ -71,8 +96,6 @@ class AuthController extends Controller
     {
         $this->validator($request->all())->validate();
 
-        // $credentials = request(['email', 'password']);
-
         $user = user::create([
             'name' => $request['name'],
             'email' => $request['email'],
@@ -84,13 +107,8 @@ class AuthController extends Controller
             'user_id' => $user['id'],
         ]);
 
-        $token = auth()->login($user);
-
         return response()->json([
-            'redirect' => '/',
-            'message' => 'registration successful!',
-            'token' => $this->respondwithtoken($token),
-            'user' => $user
+            'message' => 'User created successful!',
         ], 201);
     }
 
@@ -147,10 +165,12 @@ class AuthController extends Controller
      */
     public function logout()
     {
-
-        auth()->logout();
-
-        return response()->json(['message' => 'Successfully logged out']);
+        if (Auth::check()) {
+            Auth::user()->token()->revoke();
+            return response()->json(['message' => 'Logout success'], 200); 
+        }else{
+            return response()->json(['error' => 'Logout failed'], 500);
+        }
     }
 
     /**

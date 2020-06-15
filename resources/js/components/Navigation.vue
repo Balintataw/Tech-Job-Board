@@ -62,7 +62,7 @@ export default {
     };
   },
   mounted() {
-    console.log(this.$auth.user.name);
+    this.$auth.user && console.log(this.$auth.user.name);
   },
   methods: {
     async logout() {

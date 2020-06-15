@@ -12,6 +12,14 @@ export default {
               password
             });
           }
+          auth.register = (email, password, name, user_type) => {
+            return store.dispatch('authentication/register', {
+              email,
+              password,
+              name,
+              user_type
+            });
+          }
           auth.logout = () => {
             return store.dispatch('authentication/logout');
           }

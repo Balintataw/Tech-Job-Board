@@ -121,22 +121,13 @@ export default {
     async onSubmit() {
       console.log(this.username, this.email, this.password, this.rememberMe);
       try {
-        const { data } = await Auth.register({
-          email: this.email,
-          password: this.password,
-          name: this.username,
-          user_type: this.user_type
-        });
-        console.log("Register RESP", data);
-        const expires = "expires=" + data.token.original.expires_in;
-        document.cookie =
-          "Token=" +
-          data.token.original.access_token +
-          ";" +
-          expires +
-          ";path=/";
-
-        this.$router.replace(data.redirect);
+        await this.$auth.register(
+          this.email,
+          this.password,
+          this.username,
+          this.user_type
+        );
+        await this.$auth.login(this.email, this.password);
       } catch (error) {
         console.log("Register error:", error);
       }

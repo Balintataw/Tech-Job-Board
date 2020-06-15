@@ -16,9 +16,9 @@ use Illuminate\Support\Facades\Route;
 
 Route::group(['prefix' => 'v1'], function () {
 
-	Route::post('password/email', 'Auth\ForgotPasswordController@sendResetLinkEmail');
-	Route::post('password/reset', 'Auth\ResetPasswordController@reset');
-	Route::post('checkDomain', 'Auth\RegisterController@checkDomain');
+	// Route::group(['middleware' => 'auth:api'], function() {
+
+	// });
 
 
 	Route::group(['prefix' => 'categories'], function () {
@@ -48,19 +48,21 @@ Route::group(['prefix' => 'v1'], function () {
 });
 
 Route::group([
-	'middleware' => 'api',
+	// 'middleware' => 'auth:api',
 	'prefix' => 'v1/auth'
 ], function ($router) {
 
-	Route::post('login', 'AuthController@login');
-	Route::post('logout', 'AuthController@logout');
-	Route::post('register', 'AuthController@register');
-	Route::post('register/employer', 'AuthController@registerEmployer');
-	Route::post('refresh', 'AuthController@refresh');
-	Route::post('me', 'AuthController@me');
+	Route::post('/login', 'AuthController@login');
+	Route::post('/logout', 'AuthController@logout');
+	Route::post('/register', 'AuthController@register');
+	Route::post('/register/employer', 'AuthController@registerEmployer');
+	Route::get('/me', function(Request $request) {
+		return $request->user();
+	})->middleware('auth:api')->name('me');
 
 });
 
-// Route::middleware('auth:api')->get('/user', function (Request $request) {
-//     return $request->user();
-// });
+
+Route::middleware('auth:api')->get('/user', function (Request $request) {
+    return $request->user();
+});

@@ -67,6 +67,11 @@ instance.interceptors.response.use(
         });
       }
 
+    } else if (error.response.status === 403) {
+      if (error.response.data.message === 'Unauthorized Route') {
+        vm.$router.back();
+        // vm.$toasted.error(error.response.data.message);
+      }
     } else {
 
       console.error(error)

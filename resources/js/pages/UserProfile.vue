@@ -5,7 +5,7 @@
         <img v-if="user.profile.avatar" :src="user.profile.avatar" width="100%" />
         <img v-else :src="'/images/avatar_default.svg'" width="100%" />
         <div class="form-group text-center mt-2">
-          <image-cropper buttonText="Update Avatar" @crop-complete="updateAvatar"></image-cropper>
+          <image-cropper :aspectRatio="1" buttonText="Update Avatar" @crop-complete="updateAvatar"></image-cropper>
         </div>
       </div>
       <div class="col-md-6">

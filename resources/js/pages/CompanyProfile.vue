@@ -5,7 +5,7 @@
         <img v-if="company.logo" :src="company.logo" width="100%" />
         <img v-else :src="'/images/avatar_default.svg'" width="100%" />
         <div class="form-group text-center mt-2">
-          <image-cropper buttonText="Update Logo" @crop-complete="updateLogo"></image-cropper>
+          <image-cropper :aspectRatio="1" buttonText="Update Logo" @crop-complete="updateLogo"></image-cropper>
         </div>
       </div>
       <div class="col-md-6">

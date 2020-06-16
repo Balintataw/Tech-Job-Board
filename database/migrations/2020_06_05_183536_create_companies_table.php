@@ -21,8 +21,8 @@ class CreateCompaniesTable extends Migration
             $table->string('address')->nullable();
             $table->string('phone')->nullable();
             $table->string('website')->nullable();
-            $table->string('logo')->nullable();
-            $table->string('cover_photo')->nullable();
+            $table->string('logo')->nullable()->default('https://job-board-jossendal-dev.s3-us-west-2.amazonaws.com/company/logos/default.png');
+            $table->string('cover_photo')->nullable()->default('https://job-board-jossendal-dev.s3-us-west-2.amazonaws.com/company/photos/default.png');
             $table->text('slogan')->nullable();
             $table->text('description')->nullable();
             $table->timestamps();

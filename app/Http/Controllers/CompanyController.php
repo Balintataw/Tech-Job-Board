@@ -11,6 +11,16 @@ use App\Company;
 class CompanyController extends Controller
 {
 
+    /**
+     * Create a new CompanyController instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('employer', ['except' => ['index']]);
+    }
+
     protected function validateProfile(array $data) {
         // size is min in KB
         return Validator::make($data, [

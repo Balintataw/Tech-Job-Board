@@ -1,14 +1,6 @@
 <template>
   <div>
-    <input
-      ref="input"
-      id="image_select_button"
-      hidden
-      type="file"
-      name="image"
-      accept="image/*"
-      @change="setImage"
-    />
+    <input ref="input" hidden type="file" name="image" accept="image/*" @change="setImage" />
     <div class="form-group text-center">
       <button class="btn btn-dark btn-sm" @click="selectImage">{{ buttonText }}</button>
     </div>
@@ -58,18 +50,12 @@ export default {
   },
   props: {
     aspectRatio: {
-      type: Number,
-      default: 1
+      type: Number
     },
     buttonText: {
       type: String,
       default: "Select Image"
     }
-    // imgSrc: {
-    //   type: String,
-    //   required: false,
-    //   default: null
-    // }
   },
   data() {
     return {
@@ -95,15 +81,15 @@ export default {
     cropImage() {
       // get image data for post processing, e.g. upload or setting image src
       this.cropImg = this.$refs.cropper.getCroppedCanvas().toDataURL();
-      this.show = false;
       const file = this.dataURLtoFile(this.cropImg, "temp");
       this.$emit("crop-complete", file);
+      this.close();
     },
     cropEnd(e) {
       this.cropImg = this.$refs.cropper.getCroppedCanvas().toDataURL();
     },
     selectImage() {
-      document.getElementById("image_select_button").click();
+      this.$refs.input.click();
     },
     setImage(e) {
       this.show = true;
@@ -128,6 +114,7 @@ export default {
       this.show = false;
       this.imgSrc = "";
       this.cropImg = "";
+      this.$refs.input.value = null;
     }
   }
 };

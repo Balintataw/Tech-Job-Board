@@ -10,6 +10,16 @@ use App\Company;
 
 class JobController extends Controller
 {
+    /**
+     * Create a new JobController instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('employer', ['except' => ['index', 'show']]);
+    }
+
     public function index() {
         $jobs = Job::with('company')->get();
         return ['jobs' => $jobs];

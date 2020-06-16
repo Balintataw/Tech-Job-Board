@@ -38,7 +38,7 @@
               :to="{ name: 'job-details', params: { id: job.id, job: job.slug }}"
               class="btn btn-info btn-sm mr-1"
             >Apply</router-link>
-            <template v-if="$auth.user.id === job.user_id">
+            <template v-if="$auth.user && $auth.user.id === job.user_id">
               <router-link
                 class="btn btn-success btn-sm mr-1"
                 :to="{name: 'job-edit', params: { id: job.id, job: job.slug }}"

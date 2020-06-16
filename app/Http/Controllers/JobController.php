@@ -11,7 +11,7 @@ use App\Company;
 class JobController extends Controller
 {
     public function index() {
-        $jobs = Job::all();
+        $jobs = Job::with('company')->get();
         return ['jobs' => $jobs];
     }
 
@@ -47,11 +47,40 @@ class JobController extends Controller
         ], 200);
     }
 
+    public function update(JobPostRequest $request) {
+
+        $job_id = $request->id;
+
+        Job::where('id', $job_id)->update([
+            'title' => $request->title,
+            'address' => $request->address,
+            'type' => $request->type,
+            'position' => $request->position,
+            'remote' => $request->remote,
+            'description' => $request->description,
+            'roles' => $request->roles,
+            'category_id' => $request->category_id,
+            'last_date' => $request->last_date,
+            'status' => 1
+        ]);
+        return response()->json([
+            'message' => 'Profile updated successfully',
+        ]);
+    }
+
     public function myjobs() {
         $user_id = auth()->user()->id;
-        $jobs = Job::where('user_id', $user_id);
+        $jobs = Job::with('company')->where('user_id', $user_id)->get();
         return response()->json([
             'jobs' => $jobs
+        ], 200);
+    }
+
+    public function destroy(Request $request) {
+        $result = Job::destroy($request->id);
+        return response()->json([
+            'message' => 'Job deleted successfully',
+            'result' => $result
         ], 200);
     }
 }

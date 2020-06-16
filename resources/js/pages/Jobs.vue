@@ -22,6 +22,7 @@ export default {
   async mounted() {
     try {
       const { data } = await Api.get("jobs");
+      console.log("Jobs", data);
       this.jobs = data.jobs;
     } catch (error) {
       console.log("error", error);

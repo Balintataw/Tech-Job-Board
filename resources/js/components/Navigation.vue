@@ -44,6 +44,12 @@
                 class="dropdown-item"
                 :to="{name: 'company-profile'}"
               >Company</router-link>
+              <router-link
+                v-if="$auth.user.user_type === 'employer'"
+                class="dropdown-item"
+                :to="{name: 'my-jobs'}"
+              >My Jobs</router-link>
+              <div class="divider"></div>
               <a class="dropdown-item" href="#" @click="logout()">Logout</a>
             </div>
           </li>

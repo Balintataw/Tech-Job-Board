@@ -38,6 +38,8 @@ Route::group(['prefix' => 'v1'], function () {
 		Route::get('/{id}/{job}', 'JobController@show');
 		Route::post('/create', 'JobController@create');
 		Route::get('/my-jobs', 'JobController@myjobs');
+		Route::post('/delete', 'JobController@destroy');
+		Route::put('/{id}', 'JobCOntroller@update');
 	});
 
 	Route::group(['prefix' => 'company'], function () {

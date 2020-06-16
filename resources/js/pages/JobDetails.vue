@@ -34,10 +34,14 @@
             <p>Posted: {{job.created_at | formatDateTimeAgo }}</p>
           </div>
         </div>
-        <!-- @if(Auth::check() && Auth::user()->user_type='seeker') -->
         <br />
-        <button class="btn btn-success" style="width: 100%;">Apply</button>
-        <!-- @endif -->
+        <!-- TODO do not allow application with incomplete profile data -->
+        <button
+          class="btn btn-success"
+          :disabled="disableApply"
+          @click="apply"
+          style="width: 100%;"
+        >{{disableApply ? 'Already applied' : 'Apply' }}</button>
       </div>
     </div>
   </div>
@@ -48,18 +52,43 @@ export default {
   data() {
     return {
       job: {},
-      loaded: false
+      loaded: false,
+      apply_sucess: false
     };
   },
   async mounted() {
     const params = this.$route.params;
     try {
-      const { data } = await Api.get(`jobs/${params.id}/${params.job}`);
-      this.job = data.job;
+      const {
+        data: { job }
+      } = await Api.get(`jobs/${params.id}/${params.job}`);
+      this.job = job;
+      console.log("Job", job);
       this.loaded = true;
-      console.log("FOUND", data);
     } catch (error) {
       console.log("Error fetching job", error);
+    }
+  },
+  methods: {
+    async apply() {
+      try {
+        const {
+          data: { message }
+        } = await Api.post("applications", {
+          job_id: this.job.id
+        });
+        console.log("Apply", message);
+        this.apply_sucess = true;
+        this.$toasted.success(message);
+      } catch (error) {
+        console.log("Apply error", error);
+        this.$toasted.error(error.messages[0]);
+      }
+    }
+  },
+  computed: {
+    disableApply() {
+      return this.job.has_applied || this.apply_sucess;
     }
   }
 };

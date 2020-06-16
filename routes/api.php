@@ -39,7 +39,7 @@ Route::group(['prefix' => 'v1'], function () {
 		Route::post('/create', 'JobController@create');
 		Route::get('/my-jobs', 'JobController@myjobs');
 		Route::post('/delete', 'JobController@destroy');
-		Route::put('/{id}', 'JobCOntroller@update');
+		Route::put('/{id}', 'JobController@update');
 	});
 
 	Route::group(['prefix' => 'company'], function () {
@@ -48,6 +48,10 @@ Route::group(['prefix' => 'v1'], function () {
 		Route::put('/profile', 'CompanyController@update')->middleware('auth:api');
 		Route::post('/profile/coverphoto', 'CompanyController@coverphoto')->middleware('auth:api');
 		Route::post('/profile/logo', 'CompanyController@logo')->middleware('auth:api');
+	});
+
+	Route::group(['prefix' => 'applications'], function () {
+		Route::post('/', 'JobController@apply');
 	});
 
 	Route::post('download', 'UserprofileController@download');

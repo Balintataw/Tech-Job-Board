@@ -17,7 +17,7 @@ class JobController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('employer', ['except' => ['index', 'show']]);
+        $this->middleware('employer', ['except' => ['index', 'show', 'apply']]);
     }
 
     public function index() {
@@ -26,7 +26,10 @@ class JobController extends Controller
     }
 
     public function show($id, Job $job) {
+        $user_id = auth()->user()->id;
         $job['company'] = $job->company;
+        $has_applied = $job->users->where('id', $user_id);
+        $job['has_applied'] = sizeOf($has_applied) > 0 ? true : false;
         return ['job' => $job];
     }
 
@@ -91,6 +94,16 @@ class JobController extends Controller
         return response()->json([
             'message' => 'Job deleted successfully',
             'result' => $result
+        ], 200);
+    }
+
+    public function apply(Request $request) {
+        $user_id = auth()->user()->id;
+        $job = Job::findOrFail($request->job_id);
+        $job->users()->attach($user_id);
+
+        return response()->json([
+            'message' => 'Application successfull',
         ], 200);
     }
 }

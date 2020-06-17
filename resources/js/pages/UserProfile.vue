@@ -4,7 +4,7 @@
       <div class="col-md-3">
         <img v-if="user.profile.avatar" :src="user.profile.avatar" width="100%" />
         <img v-else :src="'/images/avatar_default.svg'" width="100%" />
-        <div class="form-group text-center mt-2">
+        <div v-if="isOwner" class="form-group text-center mt-2">
           <image-cropper :aspectRatio="1" buttonText="Update Avatar" @crop-complete="updateAvatar"></image-cropper>
         </div>
       </div>
@@ -14,31 +14,49 @@
           <div class="card-body">
             <div class="form-group">
               <label for="address">Address</label>
-              <input v-model="user.profile.address" type="text" class="form-control" name="address" />
+              <input
+                v-if="isOwner"
+                v-model="user.profile.address"
+                type="text"
+                class="form-control"
+                name="address"
+              />
+              <p v-else>{{user.profile.address}}</p>
             </div>
             <div class="form-group">
               <label for="address">Phone Number</label>
               <input
+                v-if="isOwner"
                 v-model="user.profile.phone_number"
                 type="tel"
                 class="form-control"
                 name="phone_number"
               />
+              <p v-else>{{user.profile.phone_number}}</p>
             </div>
             <div class="form-group">
               <label for>Bio</label>
-              <input v-model="user.profile.bio" type="text" class="form-control" name="bio" />
+              <input
+                v-if="isOwner"
+                v-model="user.profile.bio"
+                type="text"
+                class="form-control"
+                name="bio"
+              />
+              <p v-else>{{user.profile.bio}}</p>
             </div>
             <div class="form-group">
               <label for="experience">Work Experience</label>
               <textarea
+                v-if="isOwner"
                 v-model="user.profile.experience"
                 type="text"
                 class="form-control"
                 name="experience"
               />
+              <p v-else>{{user.profile.experience}}</p>
             </div>
-            <div class="form-group">
+            <div v-if="isOwner" class="form-group">
               <button class="btn btn-success" @click="updateInfo">Update</button>
             </div>
           </div>
@@ -60,7 +78,7 @@
           </div>
         </div>
         <br />
-        <div class="card">
+        <div v-if="isOwner" class="card">
           <div class="card-header">Resume</div>
           <div class="card-body">
             <input @change="onFileChange" type="file" class="form-control" name="resume" />
@@ -71,7 +89,7 @@
           </div>
         </div>
         <br />
-        <div class="card">
+        <div v-if="isOwner" class="card">
           <div class="card-header">Cover Letter</div>
           <div class="card-body">
             <input @change="onFileChange" type="file" class="form-control" name="cover_letter" />
@@ -104,12 +122,20 @@ export default {
     };
   },
   async mounted() {
+    const { id } = this.$route.params;
     try {
-      const { data } = await Api.get("user/profile");
-      console.log("USER", data);
-      this.user = data.user;
+      const {
+        data: { user }
+      } = await Api.get(`user/profile/${id}`);
+      console.log("USER w/profile", user);
+      this.user = user;
       this.loaded = true;
     } catch (error) {}
+  },
+  computed: {
+    isOwner() {
+      return this.$auth.user.id === this.user.id;
+    }
   },
   methods: {
     async updateInfo() {

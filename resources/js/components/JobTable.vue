@@ -35,6 +35,12 @@
         <td>
           <div class="d-flex">
             <router-link
+              v-if="$auth.user.user_type === 'employer'"
+              :to="{ name: 'job-applicants', params: { job_id: job.id }}"
+              class="btn btn-info btn-sm mr-1"
+            >Applicants: {{job.users_count}}</router-link>
+            <router-link
+              v-else
               :to="{ name: 'job-details', params: { id: job.id, job: job.slug }}"
               class="btn btn-info btn-sm mr-1"
             >Apply</router-link>

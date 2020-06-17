@@ -78,12 +78,12 @@ class JobController extends Controller
         ]);
         return response()->json([
             'message' => 'Profile updated successfully',
-        ]);
+        ], 200);
     }
 
     public function myjobs() {
         $user_id = auth()->user()->id;
-        $jobs = Job::with('company')->where('user_id', $user_id)->get();
+        $jobs = Job::with('company')->withCount('users')->where('user_id', $user_id)->get();
         return response()->json([
             'jobs' => $jobs
         ], 200);
@@ -104,6 +104,13 @@ class JobController extends Controller
 
         return response()->json([
             'message' => 'Application successfull',
+        ], 200);
+    }
+
+    public function applicants($job_id) {
+        $with_applicants = Job::where('id', $job_id)->with(['users', 'users.profile'])->first();
+        return response()->json([
+            'job' => $with_applicants
         ], 200);
     }
 }

@@ -8,6 +8,7 @@ import Register from './pages/Register';
 import RegisterEmployer from './pages/RegisterEmployer';
 import MyJobs from './pages/MyJobs';
 import JobDetails from './pages/JobDetails';
+import JobApplicants from './pages/JobApplicants';
 import JobCreate from './pages/JobCreate';
 import JobEdit from './pages/JobEdit';
 import UserProfile from './pages/UserProfile';
@@ -37,6 +38,11 @@ export const routes = [
     path: '/jobs/:id/:job',
     name: 'job-details',
     component: JobDetails,
+  },
+  {
+    path: '/job-applicants/:job_id/',
+    name: 'job-applicants',
+    component: JobApplicants,
   },
   {
     path: '/my-jobs',
@@ -78,7 +84,7 @@ export const routes = [
     component: RegisterEmployer,
   },
   {
-    path: '/user/profile',
+    path: '/user/profile/:id',
     name: 'user-profile',
     component: UserProfile,
   },

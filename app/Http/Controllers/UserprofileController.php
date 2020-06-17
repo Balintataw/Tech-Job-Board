@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Response as Download;
 use App\Profile;
+use App\User;
 
 class UserprofileController extends Controller
 {
@@ -35,8 +36,8 @@ class UserprofileController extends Controller
         ]);
     }
 
-    public function index(Request $request) {
-        $user = $request->user()->load('profile');
+    public function index($id) {
+        $user = User::with('profile')->find($id);
         return ['user' => $user];
     }
 
@@ -65,7 +66,7 @@ class UserprofileController extends Controller
 
         $user_id = auth()->user()->id;
 
-        $ext = $request->image->getClientOriginalExtension();
+        $ext = $request->image->guessExtension();
         $filename = time() . '.' . $ext;
         $avatar = Config::get('values.aws_bucket_url');
         // $avatar .= Storage::disk('s3')->put('avatars', $request->image);

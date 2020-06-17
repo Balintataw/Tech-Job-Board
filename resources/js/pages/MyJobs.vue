@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div class="row justify-content-center">
-      <div class="col-md-8">
+      <div class="col-md-10">
         <h1>My Jobs</h1>
         <job-table :jobs="jobs"></job-table>
       </div>

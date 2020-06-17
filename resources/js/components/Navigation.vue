@@ -40,6 +40,10 @@
 
             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
               <router-link
+                class="dropdown-item"
+                :to="{name: 'user-profile', params: {id: $auth.user.id}}"
+              >My Profile</router-link>
+              <router-link
                 v-if="$auth.user.user_type === 'employer'"
                 class="dropdown-item"
                 :to="{name: 'company-profile'}"

@@ -19,7 +19,7 @@ Route::group(['prefix' => 'v1'], function () {
 	Route::group(['middleware' => 'auth:api'], function() {
 		// protected user routes
 		Route::group(['prefix' => 'user'], function() {
-			Route::get('/profile', 'UserprofileController@index');
+			Route::get('/profile/{id}', 'UserprofileController@index');
 			Route::put('/profile', 'UserprofileController@update');
 			Route::post('/profile/resume', 'UserprofileController@resume');
 			Route::post('/profile/coverletter', 'UserprofileController@coverletter');
@@ -52,6 +52,7 @@ Route::group(['prefix' => 'v1'], function () {
 
 	Route::group(['prefix' => 'applications'], function () {
 		Route::post('/', 'JobController@apply');
+		Route::get('/job/applicants/{job_id}', 'JobController@applicants');
 	});
 
 	Route::post('download', 'UserprofileController@download');
